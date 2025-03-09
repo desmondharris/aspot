@@ -1,20 +1,31 @@
+from os import getenv
+from typing import Union
+
+from django.utils.timezone import now, timedelta
+from django.contrib.auth.models import User
+from .models import SpotifyToken
+
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from django.utils.timezone import now, timedelta
-from .models import SpotifyToken
-from django.conf import settings
-from os import getenv
 from dotenv import load_dotenv
 load_dotenv()
 
-SPOTIPY_CLIENT_ID = getenv('CLIENT_ID')
-SPOTIPY_CLIENT_SECRET = getenv('CLIENT_SECRET')
-SPOTIPY_REDIRECT_URI = getenv('REDIRECT_URI')
-
-SCOPES = "user-read-playback-state user-modify-playback-state playlist-modify-private playlist-modify-public"
 
 
-def get_spotify_auth():
+SCOPES = "user-library-read user-read-playback-state user-modify-playback-state playlist-modify-private playlist-modify-public"
+
+
+def get_spotify_auth() -> SpotifyOAuth:
+    """
+    Creates a spotipy OAuth object with the application id, secret, and redirect uri which is set to the
+    /spotify/callback address. Used in the /spotify/spotify_login view.
+    :rtype: SpotifyOAuth
+    :return: SpotifyOAuth object
+    """
+    SPOTIPY_CLIENT_ID = getenv('CLIENT_ID')
+    SPOTIPY_CLIENT_SECRET = getenv('CLIENT_SECRET')
+    SPOTIPY_REDIRECT_URI = getenv('REDIRECT_URI')
+
     return SpotifyOAuth(
         client_id=SPOTIPY_CLIENT_ID,
         client_secret=SPOTIPY_CLIENT_SECRET,
@@ -23,14 +34,19 @@ def get_spotify_auth():
     )
 
 
-def get_user_token(user):
+def get_user_token(user: User) -> Union[SpotifyToken, None]:
+    """
+    Fetches the given user's Spotify token from the db.
+    :param user: User object
+    :return: User's SpotifyToken if it exists, or None
+    """
     try:
         return SpotifyToken.objects.get(user=user)
     except SpotifyToken.DoesNotExist:
         return None
 
 
-def update_or_create_token(user, access_token, refresh_token, token_type, expires_in):
+def update_or_create_token(user: User, access_token, refresh_token, token_type, expires_in):
     expires_at = now() + timedelta(seconds=expires_in)
     token, created = SpotifyToken.objects.update_or_create(
         user=user,
