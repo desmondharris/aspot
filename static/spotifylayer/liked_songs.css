@@ -1,0 +1,21 @@
+#liked-songs-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.song-container {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid black;
+    border-radius: 10px;
+    margin: 10px 0;
+    padding: 10px;
+}
+
+.song-container-album-art,
+.song-container-name-artist,
+.song-container-album {
+    display: flex;
+    flex-direction: column;
+    margin-right: 10px;
+}

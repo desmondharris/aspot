@@ -24,10 +24,19 @@ def liked_songs(request):
         return redirect("spotify_login")
     try:
         results = sp.current_user_saved_tracks(offset=0, limit=50)
+        trimmed_tracks = []
         for idx, item in enumerate(results['items']):
             track = item['track']
+            track['album'].pop('available_markets')
+            trimmed_track ={
+                'name': track['name'],
+                'artists': [artist['name'] for artist in track['artists']],
+                'album': track['album']['name'],
+                'release_date': track['album']['release_date'],
+            }
+            trimmed_tracks.append(trimmed_track)
             print(idx, track['artists'][0]['name'], " – ", track['name'])
-        return HttpResponse("Liked songs will go here.")
+        return render(request, "spotifylayer/likedsongs.html", {"liked_songs": trimmed_tracks})
     except spotipy.SpotifyException as e:
         if e.http_status == 401:
             return redirect("spotify_login")
