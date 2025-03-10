@@ -9,7 +9,7 @@ from constants import *
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from .spotify_helper import get_spotify_auth, update_or_create_token, get_spotify_client
-
+from .helper_types import TrimmedTrack
 
 
 
@@ -28,15 +28,15 @@ def liked_songs(request):
         for idx, item in enumerate(results['items']):
             track = item['track']
             track['album'].pop('available_markets')
-            trimmed_track ={
-                'name': track['name'],
-                'artists': [artist['name'] for artist in track['artists']],
-                'album': track['album']['name'],
-                'release_date': track['album']['release_date'],
-            }
+            trimmed_track = TrimmedTrack(
+                name=track['name'],
+                artists=[artist['name'] for artist in track['artists']],
+                album=track['album']['name'],
+                release_date=track['album']['release_date'],
+            )
             trimmed_tracks.append(trimmed_track)
-            print(idx, track['artists'][0]['name'], " – ", track['name'])
         return render(request, "spotifylayer/likedsongs.html", {"liked_songs": trimmed_tracks})
+
     except spotipy.SpotifyException as e:
         if e.http_status == 401:
             return redirect("spotify_login")
