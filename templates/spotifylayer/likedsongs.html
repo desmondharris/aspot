@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{%  static 'spotifylayer/liked_songs.css' %}">
 </head>
 <body>
-    <h1>My Liked Songs</h1>
+    {% include 'sidebar.html' %}
     <div id="liked-songs-container">
         {% for song in liked_songs %}
         <div class="song-container">
