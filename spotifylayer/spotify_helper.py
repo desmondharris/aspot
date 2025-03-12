@@ -11,8 +11,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-
-SCOPES = "user-library-read user-read-playback-state user-modify-playback-state playlist-modify-private playlist-modify-public"
+SCOPES = "user-library-read user-read-playback-state user-modify-playback-state playlist-modify-private"\
+         " playlist-modify-public user-read-currently-playing user-read-recently-played user-top-read user-read-private user-read-email playlist-read-private"
 
 
 def get_spotify_auth() -> SpotifyOAuth:
