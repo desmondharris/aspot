@@ -1,1 +1,1 @@
-SPOTIPY_DEFAULT_SCOPE = 'user-library-read user-read-playback-state user-modify-playback-state'
+SPOTIPY_DEFAULT_SCOPE = 'user-library-read user-read-playback-state user-modify-playback-state playlist-read-private'
