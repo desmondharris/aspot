@@ -1,4 +1,9 @@
+# secrets
 .env
+.cache
 *.sqlite3
+
+# clutter
 /.venv/
+/.v/
 explorer.ipynb
