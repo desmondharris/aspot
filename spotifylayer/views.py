@@ -8,13 +8,24 @@ from constants import *
 
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
+from .models import *
 from .spotify_helper import get_spotify_auth, update_or_create_token, get_spotify_client
 from .helper_types import TrimmedTrack
+from .parsers import parse_user, parse_user_playlists
+import logging
 
+logger = logging.getLogger(__name__)
 
-
+@login_required
 def index(request):
-    return HttpResponse("Hello, world. You're at the spotifylayer index.")
+    sp = get_spotify_client(request.user)
+    if not sp:
+        return redirect("spotify_login")
+
+    playlists = []
+    for n in range(3):
+        playlists.extend(parse_user_playlists(sp.current_user_playlists(limit=50, offset=n*50)))
+    return render(request, "spotifylayer/index.html", context={"playlists": playlists})
 
 
 @login_required
@@ -48,8 +59,6 @@ def liked_songs(request):
 def spotify_login(request):
     """
     Redirects the user to the Spotify authentication page.
-    :param request:
-    :return:
     """
     auth_manager = get_spotify_auth()
     auth_url = auth_manager.get_authorize_url()
@@ -75,5 +84,19 @@ def spotify_callback(request):
                                token_info["token_type"],
                                token_info["expires_in"])
 
-    return redirect("liked_songs")
+        sp = get_spotify_client(request.user)
+        spotify_user, created = SpotifyUser.objects.update_or_create(user=request.user,
+                                                                     defaults=parse_user(sp.current_user()))
+        if created:
+            logger.info(f"New SpotifyUser created: {spotify_user} for user {request.user}")
+        else:
+            logger.debug(f"{request.user} logged in.")
+
+    else:
+        logger.error(f"Auth code note found in callback for user {request.user}")
+        return HttpResponse("Server-side authentication error")
+
+
+
+    return redirect("/")
 
