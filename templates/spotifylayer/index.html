@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spotify - Web Player</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+</head>
+<body>
+  <!-- Header with logo and navigation -->
+    <header>
+    <div class="logo">
+      <a href="#">
+        <img src="{% static 'images/spotifylogo.png' %}" alt="Spotify Logo">
+      </a>
+    </div>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Search</a>
+      <a href="#">Your Library</a>
+    </nav>
+  </header>
+
+  <!-- Main content area with sidebar -->
+  <div class="container">
+    {% include 'sidebar.html' %}
+
+    <section class="content">
+      <h1>Good Afternoon</h1>
+        {% for playlist in playlists %}
+        <div class="card">
+            <img src="{{ playlist.image_url }}" alt="Playlist Image">
+            <div class="card-text">
+                <b>{{ playlist.name }}</b>
+                <p>{{ playlist.description }}</p>
+            </div>
+        </div>
+        {% endfor %}
+      <!-- Example content cards mimicking playlists -->
+      <div class="card">
+        <p>Playlist 1</p>
+      </div>
+      <div class="card">
+          <b>test</b>
+        <p>Playlist 2</p>
+      </div>
+      <div class="card">
+        <p>Playlist 3</p>
+      </div>
+
+      <!-- Extend with more cards or sections as required -->
+    </section>
+  </div>
+
+  {% include 'footer.html' %}
+</body>
+</html>
