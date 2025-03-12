@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <title>My Liked Songs</title>
     <link rel="stylesheet" href="{%  static 'spotifylayer/liked_songs.css' %}">
+    <link rel="stylesheet" href="{%  static 'sidebar.css' %}">
 </head>
 <body>
     {% include 'sidebar.html' %}
@@ -13,12 +14,12 @@
         {% for song in liked_songs %}
         <div class="song-container">
             <div class="song-container-album-art">
-                
+
             </div>
             <div class="song-container-name-artist">
                 {{ song.name }} <br>
                 {% for artist in song.artists %}
-                    {{ artist }} 
+                    {{ artist }}
                 {% endfor %}
             </div>
             <div class="song-container-album">
