@@ -1,4 +1,5 @@
-from spotifylayer.helper_types import TrimmedPlaylist
+from typing import List
+from spotifylayer.helper_types import TrimmedPlaylist, TrimmedTrack
 
 
 def parse_user(response: dict) -> dict:
@@ -31,6 +32,7 @@ def playlist_from_recently_played(response: dict) -> list:
 
     return uris
 
+
 def parse_user_playlists(response: dict) -> list:
     """
     Parse JSON response for spotify api call /me/playlists
@@ -51,3 +53,24 @@ def parse_user_playlists(response: dict) -> list:
         }))
 
     return playlists
+
+
+def parse_playlist_items(response: dict) -> List[TrimmedTrack]:
+    """
+    Parse JSON response for spotify api call /playlists/{playlist_id}/tracks
+    :param response: JSON response from sp.playlist_items()
+    :return: list of track objects
+    :rtype: list
+    """
+    tracks = []
+
+    for item in response['items']:
+        track = item['track']
+        tracks.append(TrimmedTrack(**{
+            'name': track['name'],
+            'artists': [artist['name'] for artist in track['artists']],
+            'album': track['album']['name'],
+            'release_date': track['album']['release_date'],
+        }))
+
+    return tracks

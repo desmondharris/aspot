@@ -6,14 +6,14 @@
 }
 
 /* Content area styling */
-.content {
+.content-list {
   flex: 1;
   padding: 1rem;
   height: calc(100vh - 70px); /* Adjust height as needed */
   overflow-y: auto;
 }
 
-.content h1 {
+.content-list h1 {
   margin-bottom: 1rem;
 }
 .card {

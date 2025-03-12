@@ -12,9 +12,11 @@ load_dotenv()
 
 
 SCOPES = "user-library-read user-read-playback-state user-modify-playback-state playlist-modify-private"\
-         " playlist-modify-public user-read-currently-playing user-read-recently-played user-top-read user-read-private user-read-email playlist-read-private"
+         " playlist-modify-public user-read-currently-playing user-read-recently-played user-top-read "\
+          "user-read-private user-read-email playlist-read-private"
 
 
+## AUTH HELPERS ##
 def get_spotify_auth() -> SpotifyOAuth:
     """
     Creates a spotipy OAuth object with the application id, secret, and redirect uri which is set to the
@@ -64,7 +66,13 @@ def is_token_expired(token):
     return now() >= token.expires_in
 
 
-def get_spotify_client(user):
+def get_spotify_client(user: User) -> Union[spotipy.Spotify, None]:
+    """
+    Create a spotipy client object for the given user. If the token is expired, it is automatically refreshed.
+    :rtype: User
+    :param user: User associated with request
+    :return: Authenticated Spotipy client object
+    """
     token = get_user_token(user)
 
     if not token:
@@ -81,3 +89,5 @@ def get_spotify_client(user):
         token = get_user_token(user)  # Retrieve updated token
 
     return spotipy.Spotify(auth=token.access_token)
+
+

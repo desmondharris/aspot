@@ -9,25 +9,13 @@
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
 </head>
 <body>
-  <!-- Header with logo and navigation -->
-    <header>
-    <div class="logo">
-      <a href="#">
-        <img src="{% static 'images/spotifylogo.png' %}" alt="Spotify Logo">
-      </a>
-    </div>
-    <nav>
-      <a href="#">Home</a>
-      <a href="#">Search</a>
-      <a href="#">Your Library</a>
-    </nav>
-  </header>
+{%include 'header.html' %}
 
   <!-- Main content area with sidebar -->
   <div class="container">
     {% include 'sidebar.html' %}
 
-    <section class="content">
+    <section class="content-list">
       <h1>Good Afternoon</h1>
         {% for playlist in playlists %}
         <div class="card">

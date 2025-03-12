@@ -74,7 +74,7 @@ def spotify_callback(request):
     :return:
     """
     auth_manager = get_spotify_auth()
-    code = request.GET.get("code") # parse the code from url
+    code = request.GET.get("code")  # parse the code from url
 
     if code:
         token_info = auth_manager.get_access_token(code)
