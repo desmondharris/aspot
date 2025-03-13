@@ -18,13 +18,13 @@
     <section class="content-list">
       <h1>Good Afternoon</h1>
         {% for playlist in playlists %}
-        <div class="card">
+        <a class="card" href="playlist/{{ playlist.spotify_id }}">
             <img src="{{ playlist.image_url }}" alt="Playlist Image">
             <div class="card-text">
                 <b>{{ playlist.name }}</b>
                 <p>{{ playlist.description }}</p>
             </div>
-        </div>
+        </a>
         {% endfor %}
       <!-- Example content cards mimicking playlists -->
       <div class="card">

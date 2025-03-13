@@ -10,19 +10,29 @@
         <link rel="stylesheet" href="{% static 'css/playlist.css' %}">
     </head>
     <body>
+        {% include 'header.html' %}
         <div class="container">
             {% include 'sidebar.html' %}
             <section class="content-list">
-                <h1>Good Afternoon</h1>
-                {% for playlist in playlists %}
-                <div class="card">
-                    <img src="{{ playlist.image_url }}" alt="Playlist Image">
-                    <div class="card-text">
-                        <b>{{ playlist.name }}</b>
+                <div class="playlist-header">
+                    <img src="{{ playlist.image_url }}" alt="Playlist Image" class="playlist-header-image">
+                    <div class="playlist-header-text">
+                        <p>Playlist</p>
+                        <h1>{{ playlist.name }}</h1>
                         <p>{{ playlist.description }}</p>
                     </div>
                 </div>
+                {% for song in tracks %}
+                    <div class="card">
+                        <img src="{{ song.image_url }}" alt="Album Art">
+                        <div class="card-text">
+                            <b>{{ song.name }}</b>
+                            <p> {{ song.artists }}</p>
+                        </div>
+                    </div>
                 {% endfor %}
+                
+   
             </section>
         </div>
     </body>

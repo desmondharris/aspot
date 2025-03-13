@@ -10,6 +10,7 @@ class TrimmedTrack:
     artists: List[str]
     album: str
     release_date: str
+    image_url: Optional[str] = None
 
 
 @dataclass

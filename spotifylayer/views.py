@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from .models import *
 from .spotify_helper import get_spotify_auth, update_or_create_token, get_spotify_client
 from .helper_types import TrimmedTrack
-from .parsers import parse_user, parse_user_playlists
+from .parsers import parse_user, parse_user_playlists, parse_playlist_items, parse_playlist
 import logging
 
 logger = logging.getLogger(__name__)
@@ -28,31 +28,48 @@ def index(request):
     return render(request, "spotifylayer/index.html", context={"playlists": playlists})
 
 
+
 @login_required
 def liked_songs(request):
     sp = get_spotify_client(request.user)
     if not sp:
         return redirect("spotify_login")
+
     try:
-        results = sp.current_user_saved_tracks(offset=0, limit=50)
-        trimmed_tracks = []
-        for idx, item in enumerate(results['items']):
-            track = item['track']
-            track['album'].pop('available_markets')
-            trimmed_track = TrimmedTrack(
-                name=track['name'],
-                artists=[artist['name'] for artist in track['artists']],
-                album=track['album']['name'],
-                release_date=track['album']['release_date'],
-            )
-            trimmed_tracks.append(trimmed_track)
-        return render(request, "spotifylayer/likedsongs.html", {"liked_songs": trimmed_tracks})
+        liked_songs_json = sp.current_user_saved_tracks(limit=50)
+        tracks = parse_playlist_items(liked_songs_json)
+        total = liked_songs_json["total"]
+
+        offset = 50
+        while offset-50 < total:
+            liked_songs_json = sp.current_user_saved_tracks(limit=50, offset=offset)
+            tracks.extend(parse_playlist_items(liked_songs_json))
+            offset += 50
+
+        return render(request, "spotifylayer/playlist.html", {"tracks": tracks})
 
     except spotipy.SpotifyException as e:
         if e.http_status == 401:
             return redirect("spotify_login")
         print(f"Error: {e}")
         return HttpResponse("Error fetching liked songs.")
+
+
+def playlist(request, spotify_id):
+    sp = get_spotify_client(request.user)
+    playlist_id = spotify_id #sp.playlist(request.GET.get('spotify_id', ''))
+    if playlist_id:
+        items_json = sp.playlist_items(playlist_id)
+        tracks = parse_playlist_items(items_json)
+        playlist_json = sp.playlist(playlist_id)
+        playlist_obj = parse_playlist(playlist_json)
+        # TODO: create a playlist object for liked songs and pass to playlist view
+        return render(request, "spotifylayer/playlist.html", {"playlist": playlist_obj,
+                                                              "tracks": tracks})
+
+
+    else:
+        return HttpResponse("Playlist does not exist")
 
 
 @login_required

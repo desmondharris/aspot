@@ -54,6 +54,15 @@ def parse_user_playlists(response: dict) -> list:
 
     return playlists
 
+def parse_playlist(response: dict) -> TrimmedPlaylist:
+    return TrimmedPlaylist(
+        name=response['name'],
+        href=response['href'],
+        description=response['description'],
+        spotify_id=response['id'],
+        spotify_uri=response['uri'],
+        image_url=response['images'][0]['url'] if response['images'] else None
+    )
 
 def parse_playlist_items(response: dict) -> List[TrimmedTrack]:
     """
@@ -68,9 +77,11 @@ def parse_playlist_items(response: dict) -> List[TrimmedTrack]:
         track = item['track']
         tracks.append(TrimmedTrack(**{
             'name': track['name'],
-            'artists': [artist['name'] for artist in track['artists']],
+            'artists': ', '.join([artist['name'] for artist in track['artists']]),
             'album': track['album']['name'],
             'release_date': track['album']['release_date'],
+            'image_url': track['album']['images'][0]['url'] if track['album']['images'] else None
+
         }))
 
     return tracks
