@@ -63,6 +63,7 @@ def playlist(request, spotify_id):
         tracks = parse_playlist_items(items_json)
         playlist_json = sp.playlist(playlist_id)
         playlist_obj = parse_playlist(playlist_json)
+
         # TODO: create a playlist object for liked songs and pass to playlist view
         return render(request, "spotifylayer/playlist.html", {"playlist": playlist_obj,
                                                               "tracks": tracks})
